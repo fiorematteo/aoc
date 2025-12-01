@@ -3,10 +3,10 @@ name = "aoc"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-members = [
-    "2022",
-    "2023",
-    "2024",
-    "2024/target/aoc/aoc-autobuild",
-]
+# [workspace]
+# members = [
+#     "2022",
+#     "2023",
+#     "2024",
+#     "2024/target/aoc/aoc-autobuild",
+# ]
