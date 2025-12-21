@@ -13,7 +13,6 @@ pub fn part1(input: &str) -> usize {
 #[aoc(day11, part2)]
 pub fn part2(input: &str) -> usize {
     let var_name = HashMap::new();
-    let var_name = var_name;
     let mut map = var_name;
     for line in input.lines() {
         let (key, values) = line.split_once(": ").unwrap();
@@ -28,6 +27,7 @@ pub fn part2(input: &str) -> usize {
         * get_paths("fft", "out", &map);
     a + b
 }
+
 fn get_paths(from: &str, to: &str, map: &HashMap<&str, Vec<&str>>) -> usize {
     fn explore<'a>(
         from: &'a str,

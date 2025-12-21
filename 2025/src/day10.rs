@@ -1,7 +1,4 @@
-use std::{
-    collections::{BinaryHeap, HashMap},
-    hash::Hash,
-};
+use std::collections::{BinaryHeap, HashMap};
 use z3::{ast::Int, Optimize, SatResult};
 
 #[aoc(day10, part1, dumb)]
@@ -30,7 +27,7 @@ pub fn part1_dumb(input: &str) -> usize {
         let start_state = 0;
         let mut queue = BinaryHeap::new();
         queue.push(State {
-            state: start_state.clone(),
+            state: start_state,
             presses: 0,
         });
         while let Some(State { state, presses }) = queue.pop() {
@@ -39,7 +36,7 @@ pub fn part1_dumb(input: &str) -> usize {
                 break;
             }
             for button in &buttons {
-                let mut new_state = state.clone();
+                let mut new_state = state;
                 for &index in button {
                     new_state ^= 1 << index;
                 }
@@ -78,10 +75,10 @@ pub fn part1(input: &str) -> usize {
 
         let start_state = 0;
         let mut states_seen = HashMap::new();
-        states_seen.insert(start_state.clone(), 0);
+        states_seen.insert(start_state, 0);
         let mut queue = BinaryHeap::new();
         queue.push(State {
-            state: start_state.clone(),
+            state: start_state,
             presses: 0,
         });
         while let Some(State { state, presses }) = queue.pop() {
@@ -90,7 +87,7 @@ pub fn part1(input: &str) -> usize {
                 break;
             }
             for button in &buttons {
-                let mut new_state = state.clone();
+                let mut new_state = state;
                 for &index in button {
                     new_state ^= 1 << index;
                 }
@@ -99,7 +96,7 @@ pub fn part1(input: &str) -> usize {
                         continue;
                     }
                 }
-                states_seen.insert(new_state.clone(), presses + 1);
+                states_seen.insert(new_state, presses + 1);
                 queue.push(State {
                     state: new_state,
                     presses: presses + 1,
@@ -111,18 +108,18 @@ pub fn part1(input: &str) -> usize {
 }
 
 #[derive(Eq, PartialEq)]
-struct State<S: Clone + Eq + PartialEq + Hash> {
-    state: S,
+struct State {
+    state: usize,
     presses: usize,
 }
 
-impl<S: Clone + Eq + PartialEq + Hash> PartialOrd for State<S> {
+impl PartialOrd for State {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        other.presses.partial_cmp(&self.presses)
+        Some(self.cmp(other))
     }
 }
 
-impl<S: Clone + Eq + PartialEq + Hash> Ord for State<S> {
+impl Ord for State {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         other.presses.cmp(&self.presses)
     }
@@ -151,7 +148,7 @@ pub fn part2(input: &str) -> usize {
 
         let solver = Optimize::new();
         for bp in &buttons_presses {
-            solver.assert(&bp.ge(&Int::from_u64(0)));
+            solver.assert(&bp.ge(Int::from_u64(0)));
         }
         for (i, &joltage) in joltages.iter().enumerate() {
             let sum = buttons_presses
@@ -160,7 +157,7 @@ pub fn part2(input: &str) -> usize {
                 .filter(|(j, _)| buttons[*j].contains(&i))
                 .map(|(_, x)| x.clone())
                 .fold(Int::from_u64(0), |a, b| a + b);
-            solver.assert(&sum.eq(&Int::from_u64(joltage as u64)));
+            solver.assert(&sum.eq(Int::from_u64(joltage as u64)));
         }
         let min_presses = buttons_presses.iter().fold(Int::from_u64(0), |a, b| a + b);
 
